@@ -12,17 +12,19 @@ import net.liftweb.http.js.JsCmds.{Run, Script}
 /**
  * Message from worker to comet actor
  */
-class ProgressBarMsgBase(val percent: Int)
+abstract class ProgressBarMsgBase(val percent: Int) {
+  /*
+     Example:
+        JsCrVar("width", Num(percent)) &
+        JsCrVar("text", Str(text)) &
+        JsRaw("$('.progressbar_log').val( $('.progressbar_log').val() + " + "\n" +  " + text);").cmd &
+        JsRaw("$('.progressbar_log').scrollTop($('.progressbar_log')[0].scrollHeight);").cmd
+  */
+  def jsUpdate: JsCmd
+}
 
 
-trait ProgressBar[MessageType <: ProgressBarMsgBase] extends NamedCometActorSnippet with Logger
-{
-
-  protected def updateUiScript : JsCmd = Run{"""
-      function updateProgressBar(w) {
-         $('.bar').css('width', w + '%');
-      } """
-  }
+trait ProgressBar[MessageType <: ProgressBarMsgBase] extends NamedCometActorSnippet with Logger {
 
   protected def progressbarTpl = {
     <div class="progress progress-striped active">
@@ -32,15 +34,6 @@ trait ProgressBar[MessageType <: ProgressBarMsgBase] extends NamedCometActorSnip
 
   protected def progressbarInfoPane : NodeSeq = NodeSeq.Empty
 
-  protected def addon : NodeSeq = {
-    <head_merge>
-      { Script(updateUiScript) }
-    </head_merge>
-    <div>
-      { render(NodeSeq.Empty) }
-    </div>
-  }
-
   /**
    * Render progress bar and optionally log pane
    */
@@ -49,7 +42,7 @@ trait ProgressBar[MessageType <: ProgressBarMsgBase] extends NamedCometActorSnip
     (
       ".progress_bar_container" #> progressbarTpl &
       ".progress_info_container *" #> progressbarInfoPane
-    ).apply(in) ++ addon
+    ).apply(in) ++ render(NodeSeq.Empty)
   }
 
 
@@ -66,7 +59,7 @@ trait ProgressBar[MessageType <: ProgressBarMsgBase] extends NamedCometActorSnip
   protected def notifyAllActors(msg: MessageType) {
     NamedCometListener.getDispatchersFor(Full(name)).foreach{actorBox => {
       actorBox.map(actor => {
-        debug("notifying actor [%s] with msg [%s]".format(actor, msg)) // TODO Logger
+        info("notifying actor [%s] with msg [%s]".format(actor, msg))
         actor ! msg
       })
     }}

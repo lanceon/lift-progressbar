@@ -12,13 +12,17 @@ class DemoBarInit extends Logger {
 
   def renderActivateButton(in: NodeSeq) = {
     (
-      "button" #> SHtml.ajaxButton("Start background worker", ()=>{
-
-        info("Calling DemoWorker.start")
-        DemoWorker.start
-
+      ".button1" #> SHtml.ajaxButton("Start background worker", ()=>{
+        info("Calling DemoWorker1.start")
+        DemoWorker1.start
         JsCmds.Noop
-      })).apply(in)
+      }) &
+      ".button2" #> SHtml.ajaxButton("Start background worker", ()=>{
+        info("Calling DemoWorker2.start")
+        DemoWorker2.start
+        JsCmds.Noop
+      })
+    ).apply(in)
  }
 
 }

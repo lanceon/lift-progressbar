@@ -15,7 +15,7 @@ trait ProgressBarWorkerBase[MessageType <: ProgressBarMsgBase] extends LiftActor
   /**
    * Incapsulates worker activity logic
    */
-  def run : Unit = {}
+  def run : Unit
 
 
   def start = this ! StartWorker
