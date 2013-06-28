@@ -1,4 +1,4 @@
-name := "Lift 2.5 with Twitter Bootstrap and jQuery template"
+name := "Lift 2.5 and Twitter Bootstrap/jQuery progressbar integration"
 
 version := "0.0.1"
 
