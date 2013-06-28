@@ -46,5 +46,7 @@ class Boot {
 
     // Use HTML5 for rendering
     LiftRules.htmlProperties.default.set((r: Req) => new Html5Properties(r.userAgent))
+
+    logger.info("APPLICATION STARTED: run.mode = %s".format(Props.mode))
   }
 }
